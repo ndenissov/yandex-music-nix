@@ -17,6 +17,7 @@
 , gdk-pixbuf
 , glib
 , gtk3
+, libayatana-appindicator
 , libcxx
 , libdrm
 , libnotify
@@ -66,6 +67,7 @@ stdenv.mkDerivation rec {
     gdk-pixbuf
     glib
     gtk3
+    libayatana-appindicator
     libcxx
     libdrm
     libnotify
@@ -119,6 +121,7 @@ stdenv.mkDerivation rec {
     # Make the wrapper
     makeWrapper $out/share/yandex-music/yandexmusic $out/bin/yandex-music \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath buildInputs}" \
+      --prefix PATH : "${lib.makeBinPath [ xdg-utils ]}" \
       --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}"
 
     runHook postInstall
