@@ -2,51 +2,8 @@
 , stdenv
 , fetchurl
 , dpkg
-, autoPatchelfHook
 , makeWrapper
-, alsa-lib
-, at-spi2-atk
-, at-spi2-core
-, atk
-, cairo
-, cups
-, dbus
-, expat
-, fontconfig
-, freetype
-, gdk-pixbuf
-, glib
-, gtk3
-, libayatana-appindicator
-, libcxx
-, libdrm
-, libnotify
-, libpulseaudio
-, libsecret
-, libuuid
-, libxkbcommon
-, mesa
-, nspr
-, nss
-, pango
-, systemd
-, udev
-, wayland
-, libGL
-, vulkan-loader
-, xdg-utils
-, libx11
-, libxcomposite
-, libxcursor
-, libxdamage
-, libxext
-, libxfixes
-, libxi
-, libxrandr
-, libxrender
-, libxtst
-, libxcb
-, libxshmfence
+, electron
 }:
 
 stdenv.mkDerivation rec {
@@ -60,55 +17,7 @@ stdenv.mkDerivation rec {
 
   nativeBuildInputs = [
     dpkg
-    autoPatchelfHook
     makeWrapper
-  ];
-
-  buildInputs = [
-    alsa-lib
-    at-spi2-atk
-    at-spi2-core
-    atk
-    cairo
-    cups
-    dbus
-    expat
-    fontconfig
-    freetype
-    gdk-pixbuf
-    glib
-    gtk3
-    libayatana-appindicator
-    libcxx
-    libdrm
-    libnotify
-    libpulseaudio
-    libsecret
-    libuuid
-    libxkbcommon
-    mesa
-    nspr
-    nss
-    pango
-    systemd
-    udev
-    wayland
-    libGL
-    vulkan-loader
-    xdg-utils
-  ] ++ [
-    libx11
-    libxcomposite
-    libxcursor
-    libxdamage
-    libxext
-    libxfixes
-    libxi
-    libxrandr
-    libxrender
-    libxtst
-    libxcb
-    libxshmfence
   ];
 
   unpackPhase = ''
@@ -118,8 +27,9 @@ stdenv.mkDerivation rec {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/bin $out/share
-    cp -r opt/Яндекс\ Музыка $out/share/yandex-music
+    mkdir -p $out/bin $out/share/yandex-music
+    cp opt/Яндекс\ Музыка/resources/app.asar $out/share/yandex-music/
+
     cp -r usr/share/applications $out/share/
     cp -r usr/share/icons $out/share/
 
@@ -133,8 +43,8 @@ stdenv.mkDerivation rec {
       --replace-fail "StartupWMClass=Яндекс Музыка" "StartupWMClass=yandexmusic"
 
     # Make the wrapper
-    makeWrapper $out/share/yandex-music/yandexmusic $out/bin/yandex-music \
-      --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath buildInputs}" \
+    makeWrapper ${electron}/bin/electron $out/bin/yandex-music \
+      --add-flags "$out/share/yandex-music/app.asar" \
       --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}"
 
     runHook postInstall
@@ -145,7 +55,7 @@ stdenv.mkDerivation rec {
     homepage = "https://music.yandex.ru/";
     license = licenses.unfree;
     maintainers = [ ];
-    platforms = [ "x86_64-linux" ];
+    platforms = [ "x86_64-linux" "aarch64-linux" ];
     mainProgram = "yandex-music";
   };
 }
