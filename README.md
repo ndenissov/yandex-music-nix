@@ -1,6 +1,13 @@
 # Yandex Music NixOS Flake
 
-This is a standalone, native NixOS flake for installing and running the official Yandex Music desktop application on Linux and macOS.
+<div align="center">
+  <img src="https://img.shields.io/badge/NixOS-5277C3?style=for-the-badge&logo=NixOS&logoColor=white" alt="NixOS" />
+  <img src="https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS" />
+  <img src="https://img.shields.io/github/actions/workflow/status/ndenissov/yandex-music-nix/update.yml?style=for-the-badge&label=Updates" alt="Auto-updates" />
+</div>
+
+This is a standalone, native NixOS flake for installing and running the official Yandex Music desktop application on Linux and macOS. 
+It serves as a modern, actively maintained replacement for the now-archived [cucumber-sp/yandex-music-linux](https://github.com/cucumber-sp/yandex-music-linux).
 
 Unlike older repackaging solutions that relied on extracting the Windows ASAR, this project uses the official `.deb` (for Linux) and `.dmg` (for macOS) native clients provided by Yandex.
 

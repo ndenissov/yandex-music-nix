@@ -1,0 +1,40 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'yandex-music/linux.nix'
+      - 'yandex-music/darwin.nix'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get version
+        id: get_version
+        run: |
+          VERSION=$(grep -oP 'version = "\K[^"]+' yandex-music/linux.nix | head -n 1)
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Check if tag exists
+        id: check_tag
+        uses: mukunku/tag-exists-action@v1.6.0
+        with: 
+          tag: 'v${{ steps.get_version.outputs.version }}'
+
+      - name: Create Release
+        if: steps.check_tag.outputs.exists == 'false'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: v${{ steps.get_version.outputs.version }}
+          name: Yandex Music v${{ steps.get_version.outputs.version }}
+          body: "Automated release for Yandex Music version ${{ steps.get_version.outputs.version }}."
+          generate_release_notes: false
