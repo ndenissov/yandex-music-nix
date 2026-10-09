@@ -30,12 +30,23 @@
 , nss
 , pango
 , systemd
-, xorg
 , udev
 , wayland
 , libGL
 , vulkan-loader
 , xdg-utils
+, libx11
+, libxcomposite
+, libxcursor
+, libxdamage
+, libxext
+, libxfixes
+, libxi
+, libxrandr
+, libxrender
+, libxtst
+, libxcb
+, libxshmfence
 }:
 
 stdenv.mkDerivation rec {
@@ -85,20 +96,20 @@ stdenv.mkDerivation rec {
     libGL
     vulkan-loader
     xdg-utils
-  ] ++ (with xorg; [
-    libX11
-    libXcomposite
-    libXcursor
-    libXdamage
-    libXext
-    libXfixes
-    libXi
-    libXrandr
-    libXrender
-    libXtst
+  ] ++ [
+    libx11
+    libxcomposite
+    libxcursor
+    libxdamage
+    libxext
+    libxfixes
+    libxi
+    libxrandr
+    libxrender
+    libxtst
     libxcb
     libxshmfence
-  ]);
+  ];
 
   unpackPhase = ''
     dpkg-deb -x $src .
@@ -121,7 +132,6 @@ stdenv.mkDerivation rec {
     # Make the wrapper
     makeWrapper $out/share/yandex-music/yandexmusic $out/bin/yandex-music \
       --prefix LD_LIBRARY_PATH : "${lib.makeLibraryPath buildInputs}" \
-      --prefix PATH : "${lib.makeBinPath [ xdg-utils ]}" \
       --add-flags "\''${NIXOS_OZONE_WL:+\''${WAYLAND_DISPLAY:+--ozone-platform-hint=auto --enable-features=WaylandWindowDecorations}}"
 
     runHook postInstall
