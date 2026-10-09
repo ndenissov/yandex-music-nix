@@ -5,6 +5,7 @@
 , makeWrapper
 , electron
 , libayatana-appindicator
+, asar
 }:
 
 stdenv.mkDerivation rec {
@@ -19,6 +20,7 @@ stdenv.mkDerivation rec {
   nativeBuildInputs = [
     dpkg
     makeWrapper
+    asar
   ];
 
   unpackPhase = ''
@@ -31,6 +33,14 @@ stdenv.mkDerivation rec {
     mkdir -p $out/bin $out/share/yandex-music
     cp opt/Яндекс\ Музыка/resources/app.asar $out/share/yandex-music/
     cp -r opt/Яндекс\ Музыка/resources/assets $out/share/yandex-music/
+
+    # Patch process.resourcesPath in app.asar to point to $out/share/yandex-music
+    # This is required because we run the app using system electron, which changes process.resourcesPath
+    asar extract $out/share/yandex-music/app.asar $out/share/yandex-music/app
+    substituteInPlace $out/share/yandex-music/app/index.js \
+      --replace-warn "process.resourcesPath" "require('path').join(__dirname, '..')"
+    asar pack $out/share/yandex-music/app $out/share/yandex-music/app.asar
+    rm -rf $out/share/yandex-music/app
 
     cp -r usr/share/applications $out/share/
     cp -r usr/share/icons $out/share/
