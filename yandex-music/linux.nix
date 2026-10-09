@@ -30,6 +30,7 @@ stdenv.mkDerivation rec {
 
     mkdir -p $out/bin $out/share/yandex-music
     cp opt/Яндекс\ Музыка/resources/app.asar $out/share/yandex-music/
+    cp -r opt/Яндекс\ Музыка/resources/assets $out/share/yandex-music/
 
     cp -r usr/share/applications $out/share/
     cp -r usr/share/icons $out/share/
