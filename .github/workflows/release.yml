@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'yandex-music/linux.nix'
-      - 'yandex-music/darwin.nix'
 
 permissions:
   contents: write
@@ -24,14 +21,14 @@ jobs:
           VERSION=$(grep -oP 'version = "\K[^"]+' yandex-music/linux.nix | head -n 1)
           echo "version=$VERSION" >> $GITHUB_OUTPUT
 
-      - name: Check if tag exists
-        id: check_tag
-        uses: mukunku/tag-exists-action@v1.6.0
-        with: 
-          tag: 'v${{ steps.get_version.outputs.version }}'
+      - name: Update Tag
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -f v${{ steps.get_version.outputs.version }}
+          git push -f origin v${{ steps.get_version.outputs.version }}
 
-      - name: Create Release
-        if: steps.check_tag.outputs.exists == 'false'
+      - name: Create or Update Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: v${{ steps.get_version.outputs.version }}

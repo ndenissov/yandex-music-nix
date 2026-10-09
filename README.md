@@ -3,7 +3,7 @@
 <div align="center">
   <img src="https://img.shields.io/badge/NixOS-5277C3?style=for-the-badge&logo=NixOS&logoColor=white" alt="NixOS" />
   <img src="https://img.shields.io/badge/macOS-000000?style=for-the-badge&logo=apple&logoColor=white" alt="macOS" />
-  <img src="https://img.shields.io/github/actions/workflow/status/ndenissov/yandex-music-nix/update.yml?style=for-the-badge&label=Updates" alt="Auto-updates" />
+  <img src="https://img.shields.io/github/actions/workflow/status/ndenissov/yandex-music-nix/release.yml?style=for-the-badge&label=Releases" alt="Releases" />
 </div>
 
 This is a standalone, native NixOS flake for installing and running the official Yandex Music desktop application on Linux and macOS. 
@@ -54,8 +54,6 @@ environment.systemPackages = [
 
 ## How it works
 
-The derivation uses `autoPatchelfHook` on Linux to dynamically link the pre-built Electron binaries with NixOS libraries (such as `alsa-lib`, `vulkan-loader`, `libx11`, etc.). On macOS, it extracts the `.dmg` using `undmg` and installs the `.app` bundle.
+On Linux, this flake downloads the official `.deb` release, extracts the `app.asar` source code along with its tray assets, and runs it natively using the Nixpkgs `electron` package. This ensures perfect integration with Wayland, system certificates, and GSettings, while bypassing the bugs present in Yandex's bundled Electron binary.
 
-## Known Issues
-
-- **SIGSEGV on close**: When closing the app via the system tray under a Wayland session, the app may crash (`SIGSEGV` / `Address boundary error`). This is an upstream Electron bug related to Ozone Wayland and idle inhibitors. It is entirely harmless and does not affect playback or cause data loss.
+On macOS, it extracts the `.dmg` using `undmg` and installs the `.app` bundle natively.
