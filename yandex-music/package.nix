@@ -110,9 +110,11 @@ stdenv.mkDerivation rec {
     cp -r usr/share/applications $out/share/
     cp -r usr/share/icons $out/share/
 
-    # Replace absolute path in desktop file
+    # Fix desktop file: replace absolute path, fix Wayland icon (StartupWMClass), and rename to English
     substituteInPlace $out/share/applications/yandexmusic.desktop \
-      --replace-fail "/opt/Яндекс Музыка/yandexmusic" "$out/bin/yandex-music"
+      --replace-fail "/opt/Яндекс Музыка/yandexmusic" "$out/bin/yandex-music" \
+      --replace-fail "Name=Яндекс Музыка" "Name=Yandex Music" \
+      --replace-fail "StartupWMClass=Яндекс Музыка" "StartupWMClass=yandexmusic"
 
     # Make the wrapper
     makeWrapper $out/share/yandex-music/yandexmusic $out/bin/yandex-music \
