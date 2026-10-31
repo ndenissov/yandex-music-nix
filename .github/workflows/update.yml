@@ -24,11 +24,14 @@ jobs:
       - name: Run update script
         run: ./update.sh
 
-      - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "chore: update Yandex Music to latest version"
-          title: "Update Yandex Music"
-          body: "Automated update for Yandex Music."
-          branch: "auto-update"
+      - name: Commit and push if changed
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add yandex-music/linux.nix yandex-music/darwin.nix
+          if ! git diff --cached --quiet; then
+            VERSION=$(grep -oP 'version = "\K[^"]+' yandex-music/linux.nix | head -n 1)
+            git commit -m "chore: update Yandex Music to $VERSION"
+            git push origin main
+          fi
+
