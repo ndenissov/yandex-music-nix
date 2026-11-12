@@ -6,11 +6,11 @@
 
 stdenv.mkDerivation rec {
   pname = "yandex-music";
-  version = "5.126.1";
+  version = "5.127.0";
 
   src = fetchurl {
     url = "https://desktop.app.music.yandex.net/stable/Yandex_Music_universal_${version}.dmg";
-    hash = "sha256-K9WC6m+uNXU4UQgrK9iq7y3BwKPnSi3BPWExFeYE1DY=";
+    hash = "sha256-v/jCKcsY6LXVAxyoBfRZji6w/FmZlQR2jl1MWz8It88=";
   };
 
   nativeBuildInputs = [ undmg ];
